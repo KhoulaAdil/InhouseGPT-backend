@@ -27,14 +27,15 @@ def chat(req: ChatRequest):
     print("🔥 Building metadata objects...")
 
     sources = [
-        SourceMeta(
-            return_name=m.get("return", ""),
-            sheet_name=m.get("sheet", ""),
-            line_code=str(m.get("line_code", "")),
-            line_desc=m.get("line_desc", "")
-        )
-        for m in metadata_list
-    ]
+    SourceMeta(
+        return_name=str(m.get("return", "")),
+        sheet=str(m.get("sheet", "")),
+        line_code=str(m.get("line_code", "")),
+        line_desc=str(m.get("line_desc", ""))
+    )
+    for m in metadata_list
+]
+
 
     print("🔥 Returning ChatResponse to frontend\n")
 
