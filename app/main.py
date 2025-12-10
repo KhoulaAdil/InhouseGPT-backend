@@ -12,32 +12,31 @@ def health():
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
-    # 🔥 DEBUG LOGS — SAFE (deploy won't break)
     print("🔥 /chat endpoint HIT")
     print(f"🔥 User Question: {req.question}")
 
-    print("🔥 Starting RAG PIPELINE... (retrieval + LLM)")
+    print("🔥 Starting RAG PIPELINE...")
 
-    # Actual pipeline call
+    # ✅ RAG pipeline
     answer, metadata_list = rag_pipeline.query(req.question, req.history)
 
     print("🔥 Pipeline returned ANSWER successfully")
-    print(f"🔥 Answer snippet: {str(answer)[:120]}...")  # Just first 120 chars
-    
+    print(f"🔥 Answer snippet: {str(answer)[:120]}...")
+
     print("🔥 Building metadata objects...")
 
+    # ✅ CRITICAL FIX: sheet_name + str()
     sources = [
-    SourceMeta(
-        return_name=str(m.get("return", "")),
-        sheet=str(m.get("sheet", "")),
-        line_code=str(m.get("line_code", "")),
-        line_desc=str(m.get("line_desc", ""))
-    )
-    for m in metadata_list
-]
+        SourceMeta(
+            return_name=str(m.get("return", "")),
+            sheet_name=str(m.get("sheet", "")),   # ✅ FIXED
+            line_code=str(m.get("line_code", "")),
+            line_desc=str(m.get("line_desc", ""))
+        )
+        for m in metadata_list
+    ]
 
-
-    print("🔥 Returning ChatResponse to frontend\n")
+    print("🔥 Returning ChatResponse\n")
 
     return ChatResponse(
         answer=answer,
