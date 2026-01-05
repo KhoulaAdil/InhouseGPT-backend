@@ -1,1 +1,1 @@
-# bank-gpt-backend
+# InhouseGPT-backend
